@@ -1,0 +1,54 @@
+name: Sync to Hugging Face Hub
+
+on:
+  push:
+    branches:
+      - main
+  workflow_run:
+    workflows: ["Sync Upstream"]
+    types:
+      - completed
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.workflow_run.conclusion == 'success'
+    steps:
+      # 第1步：检出您的 GitHub 仓库代码
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # 第2步：设置 Python 环境，因为我们将使用 Python 脚本
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # 第3步：安装 huggingface_hub 库
+      - name: Install Hugging Face Hub library
+        run: pip install huggingface_hub
+
+      # 第4步：使用 Python 脚本上传整个文件夹
+      - name: Push to Hub
+        env:
+          # 从 Secrets 中读取您的 Hugging Face 令牌
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -c "
+          from huggingface_hub import HfApi
+          import os
+          print('Starting upload to Hugging Face Hub...')
+          api = HfApi()
+          
+          # 调用核心函数 upload_folder
+          api.upload_folder(
+              folder_path='.',  # 上传当前整个文件夹
+              repo_id=os.getenv('GITHUB_REPOSITORY'), # 直接使用 '用户名/仓库名' 作为 repo_id
+              repo_type='space', # 明确指定这是一个 Space
+              token=os.getenv('HF_TOKEN'), # 使用令牌进行认证
+              commit_message='Sync from GitHub' # 提交信息
+          )
+          print('Upload complete.')
+          "

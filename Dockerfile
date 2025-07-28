@@ -9,6 +9,9 @@ COPY ./VERSION /app
 RUN pip install --no-cache-dir -r requirements.txt
 COPY ./app /app/app
 
+# 在构建时以root身份创建应用所需的data目录，并开放写入权限
+RUN mkdir data && chmod 777 data
+
 # Expose port
 EXPOSE 7860
 

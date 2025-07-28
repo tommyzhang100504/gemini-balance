@@ -8,6 +8,7 @@ on:
     workflows: ["Sync Upstream"]
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   sync-to-hub:

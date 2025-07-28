@@ -1,3 +1,12 @@
+---
+title: Gemini Balance
+emoji: 📈
+colorFrom: red
+colorTo: red
+sdk: docker
+pinned: false
+---
+
 [Read this document in Chinese](README_ZH.md)
 
 # Gemini Balance - Gemini API Proxy and Load Balancer

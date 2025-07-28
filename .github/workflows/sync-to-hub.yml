@@ -4,16 +4,11 @@ on:
   push:
     branches:
       - main
-  workflow_run:
-    workflows: ["Sync Upstream"]
-    types:
-      - completed
   workflow_dispatch:
 
 jobs:
   sync-to-hub:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event.workflow_run.conclusion == 'success'
     steps:
       # 第1步：检出您的 GitHub 仓库代码
       - name: Checkout
